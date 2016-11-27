@@ -5,6 +5,7 @@
                  [ring/ring-core "1.5.0"]
                  [ring/ring-defaults "0.2.1"]
                  ; Frontend deps:
+                 [reagent "0.6.0"]
                  [alandipert/storage-atom "2.0.1"]]
 
   :plugins [[lein-pdo "0.1.1"]
