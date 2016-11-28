@@ -4,6 +4,7 @@
             [frontend.hatch-pos :refer [hatch-positions]]
             [frontend.loc :as loc]))
 
+(def base-img "img/k.jpeg")
 (def revealed-img "img/r.jpeg")
 (defn px [v] (str v "px"))
 
@@ -16,12 +17,13 @@
         :else (.getDate now))))
 
 (defn make-hatches []
-  (map (fn [{:keys [x y x2 y2]} n can-open?]
+  (map (fn [{:keys [x y x2 y2 r]} n can-open?]
          {:n n
           :x (- x 4)
           :y (- y 6)
           :w (- x2 x 4)
           :h (- y2 y 6)
+          :r r
           :can-open? can-open?})
        hatch-positions
        (range 1 25)
@@ -33,7 +35,7 @@
     (or (get-in terms [:until days-until])
         ((terms :until-more) days-until))))
 
-(defn active-hatch-component [{:keys [n x y w h]} opened?]
+(defn active-hatch-component [{:keys [n x y w h can-open?]} opened?]
   [:div.hatch.allowed {:class (if @opened? "opened" "closed")
                        :style {:left (px x)
                                :top (px y)
@@ -47,12 +49,11 @@
                     :top (px (* y -1))}
             :src revealed-img}])])
 
-(defn inactive-hatch-component [lang {:keys [n x y w h]}]
+(defn hatch-component [lang {:keys [n x y w h r can-open?]} opened?]
   (let [tooltip? (r/atom false)
-        tooltip! (fn [v]
-                   (js/console.log "tooltip!" v)
-                   (reset! tooltip? v))
         tooltip-task (atom nil)
+        tooltip! (fn [v]
+                   (reset! tooltip? v))
         mouse-enter (fn [_]
                       (js/clearTimeout @tooltip-task)
                       (reset! tooltip-task (js/setTimeout tooltip! 500 true))
@@ -61,6 +62,9 @@
                       (js/clearTimeout @tooltip-task)
                       (reset! tooltip-task (js/setTimeout tooltip! 100 false))
                       nil)
+        mouse-click (fn [_]
+                      (if can-open?
+                        (swap! opened? not)))
         touch-start (fn [_]
                       (js/console.log "touch start"))
         touch-end (fn [_]
@@ -70,29 +74,26 @@
         touch-move (fn [_]
                      (js/console.log "touch move"))]
     (fn []
-      [:div
-       [:div.hatch {:class "closed forbidden"
-                    :style {:left (px x)
-                            :top (px y)
-                            :width (px w)
-                            :height (px h)
-                            :line-height (px h)}
-                    :on-mouse-enter mouse-enter
-                    :on-mouse-leave mouse-leave
-                    :on-touch-start touch-start
-                    :on-touch-end touch-end
-                    :on-touch-cancel touch-cancel}]
-       (if @tooltip?
-         [:div.tooltip {:style {:left (px x)
-                                :top (px (+ y h 10))}}
-          [:p (let [tooltip-message (make-tooltip-message (loc/terms @lang) n)]
-                (js/console.log "tooltip:" tooltip-message)
-                tooltip-message)]])])))
-
-(defn hatch-component [lang {:keys [can-open?] :as hatch} opened?]
-  (if can-open?
-    [active-hatch-component hatch opened?]
-    [inactive-hatch-component lang hatch]))
+      [:div.hatch {:class (str (if can-open? "allowed " "forbidden ")
+                               (if @opened? "opened " "closed "))
+                   :style {:left (px x)
+                           :top (px y)
+                           :width (px w)
+                           :height (px h)
+                           :line-height (px h)
+                           :transform (str "rotate(" (or r 0) "deg)")}
+                   :on-mouse-enter mouse-enter
+                   :on-mouse-leave mouse-leave
+                   :on-click mouse-click
+                   :on-touch-start touch-start
+                   :on-touch-end touch-end
+                   :on-touch-cancel touch-cancel}
+       (if (and can-open? @opened?)
+         [:img {:style {:left (px (- x))
+                        :top (px (- y))}
+                :src revealed-img}])
+       [:div.label
+        (str n)]])))
 
 (defn flag [flag-lang lang]
   [:a {:on-click (fn [_] (reset! lang flag-lang))}
@@ -115,7 +116,7 @@
           [:div#image-wrapper
            (for [{n :n :as hatch} (make-hatches)]
              ^{:key n} [hatch-component lang hatch (r/cursor opened [n])])]
-          [:img#main-image {:src "img/k.jpeg"}]]
+          [:img#main-image {:src base-img}]]
          [:footer
           [:p (terms :art-copy)]
           [:p

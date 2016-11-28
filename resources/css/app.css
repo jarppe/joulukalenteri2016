@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Molle";
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/molle/v4/L6RgGzlKavkYSdsgT-aeeQ.ttf) format("truetype");
+}
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  color: #cccdff;
+  background: #3a64ff;
+}
+body {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Molle', serif;
+}
+h1 {
+  font-size: 40px;
+}
+h2 {
+  padding-top: 30px;
+  font-size: 26px;
+}
