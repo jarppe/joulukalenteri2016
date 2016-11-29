@@ -19,19 +19,11 @@ html, body {
 body {
   display:          flex;
   flex-direction:   column;
-  align-items:      center;
+  align-items:      stretch;
   justify-content:  flex-start;
-  padding-left:     10px;
   font-family:      "Molle", serif;
   font-style:       italic;
   font-weight:      400;
-}
-
-#app {
-  display:          flex;
-  flex-direction:   column;
-  align-items:      center;
-  justify-content:  flex-start;
 }
 
 header {
@@ -52,31 +44,13 @@ header {
   }
 }
 
-.lang {
-  position: absolute;
-  top:      10px;
-  right:    40px;
-  a {
-    padding: 5px;
-    img {
-      cursor: pointer;
-      border: 1px solid blue;
-      &.active {
-        box-shadow: 0px 0px 7px blue;
-      }
-    }
-  }
-}
-
-h1.waiting {
-  margin-top:   5rem;
-  font-size:    4rem;
+canvas {
+  margin: 0 40px;
 }
 
 footer {
-  font-size:   0.9rem;
+  font-size:   1rem;
   margin:      1rem;
-  width:       75%;
   text-align:  center;
   p {
     margin: 0.2rem;
@@ -90,73 +64,6 @@ footer {
       color: blue;
     }
   }
-}
-
-#image-wrapper {
-  width:           100%;
-  position:        relative;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-}
-
-#main-image {
-  width:           100%;
-  position:        relative;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  opacity: 0.1;
-}
-
-
-.hatch {
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-
-  position:         absolute;
-  overflow:         hidden;
-  border: 1px solid green;
-
-  &.allowed {
-    background: rgba(32, 192, 32, 0.7);
-    cursor:     pointer;
-    color: green;
-  }
-
-  &.forbidden {
-    background: rgba(192, 32, 32, 0.4);
-    cursor:     not-allowed;
-    color: red;
-  }
-
-  opacity:     0.0;
-  transition:  opacity 0.5s;
-
-  &:hover {
-    opacity: 1.0;
-  }
-
-  &.opened {
-    opacity: 1.0;
-  }
-
-  img {
-    position: relative;
-  }
-
-  .label {
-    position: relative;
-    font-size: 4rem;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-  }
-}
-
-.tooltip {
-  position:     relative;
-  background:   white;
-  font-size:    1.5rem;
-  padding:      5px;
 }
 
 .preload {
