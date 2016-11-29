@@ -1,6 +1,12 @@
 (ns frontend.hatch-pos)
 
-(def hatch-positions [#_1  {:x 110 :y  48 :x2 199 :y2 123}
+(def hatch-positions [
+
+                      {:x 132 :y 161 :x2 216 :y2 321 }
+                      {:x 472 :y 136 :x2 636 :y2 335 }
+
+
+                      #_1  {:x 110 :y  48 :x2 199 :y2 123}
                       #_2  {:x 481 :y 363 :x2 551 :y2 454}
                       #_3  {:x 799 :y 585 :x2 902 :y2 653}
                       #_4  {:x  87 :y 439 :x2 136 :y2 468}

@@ -99,12 +99,22 @@ footer {
   -webkit-touch-callout: none;
 }
 
+#main-image {
+  width:           100%;
+  position:        relative;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  opacity: 0.1;
+}
+
+
 .hatch {
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 
   position:         absolute;
   overflow:         hidden;
+  border: 1px solid green;
 
   &.allowed {
     background: rgba(32, 192, 32, 0.7);
