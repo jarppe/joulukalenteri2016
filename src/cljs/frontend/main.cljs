@@ -142,10 +142,10 @@
 (defn init! []
   ; Remove "loading..." div:
   (let [loading (get-element "loading")]
-    (-> loading .-parentNode (.removeChild loading)))
+    (aset loading "className" "hidden"))
   ; Make header, canvas and footer visible:
   (doseq [e (map get-element ["header" "canvas" "footer"])]
-    (aset e "style" ""))
+    (aset e "className" ""))
   ; Make a repaint, register it to places and invoke it.
   (let [canvas (get-element "canvas")
         images (into {} (map (juxt keyword get-element) ["k" "r" "t" "d"]))
