@@ -4,6 +4,7 @@
   [[x1 y1] [x2 y1] [x2 y2] [x1 y2]])
 
 (def hatches [{:n 0
+               :label "30.11"
                :polygon (rect 132 161 206 321)
                :translate [-8 20]}
               {:n 1
@@ -46,46 +47,50 @@
                :polygon [[1216 700] [1430 700] [1430 940] [1367 1010] [1216 1010]]
                :translate [0 8]}
               {:n 13
-               :polygon (rect 1700 860 1892 1234)
-               :translate [0 22]}
+               :polygon [[1604 1019]
+                         [1587 997]
+                         [1586 861]
+                         [1927 858]
+                         [1915 1234]
+                         [1730 1224]
+                         [1732 1159]
+                         [1678 1051]]
+               :translate [0 12]}
               {:n 14
-               :polygon (rect 1595 870 1700 1050)
-               :translate [5 20]}
-              {:n 15
                :polygon (rect 1562 1059 1693 1251)
                :translate [0 17]}
-              {:n 16
+              {:n 15
                :polygon (rect 834 984 1098 1259)
                :translate [0 15]}
-              {:n 17
+              {:n 16
                :polygon [[695 910]
                          [743 810]
                          [797 810]
                          [797 1131]
                          [695 1131]]
                :translate [-5 20]}
-              {:n 18
+              {:n 17
                :polygon (rect 496 871 594 1009)
                :translate [-5 20]}
-              {:n 19
+              {:n 18
                :polygon (rect 376 1000 466 1147)
                :translate [-2 22]}
-              {:n 20
+              {:n 19
                :polygon (rect 190 1024 360 1091)
                :translate [-2 22]}
-              {:n 21
+              {:n 20
                :polygon (rect 516 1152 720 1249)
                :translate [0 22]}
-              {:n 22
+              {:n 21
                :polygon (rect 30 827 85 884)
                :translate [0 15]}
-              {:n 23
+              {:n 22
                :polygon (rect 337 610 474 797)
                :translate [0 19]}
-              {:n 24
+              {:n 23
                :polygon (rect 624 684 780 780)
                :translate [0 10]}
-              {:n 25
+              {:n 24
                :polygon [[733 456]
                          [755 397]
                          [861 397]

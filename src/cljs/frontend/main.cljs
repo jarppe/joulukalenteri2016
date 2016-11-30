@@ -7,17 +7,17 @@
 (def image-ratio (/ image-width image-height))
 (def t-image-index 3)                                       ; http://images.huffingtonpost.com/2016-07-15-1468607338-43291-DonaldTrumpangry.jpg
 
-#_ FIXME
+#_FIXME
 (def debug (atom {:active :k
                   :offset {:k {:x 0 :y 0}
                            :d {:x 0 :y 0}
                            :r {:x 0 :y 0}}}))
 
-#_ FIXME
+#_FIXME
 (defn debug! []
   (swap! debug update :active {:k :d :d :r :r :k}))
 
-#_ FIXME
+#_FIXME
 (defn debug-move! [axis value]
   (swap! debug (fn [{:keys [active] :as debug}]
                  (if (= active :k)
@@ -44,13 +44,13 @@
                     (crossing-number point [(nth polygon n) (nth polygon (inc n))])))))
 
 (def active-hatch-count
-  24
-  #_ FIXME
-  #_(let [now (js/Date.)]
-      (cond
-        (> (.getYear now) 116) 24
-        (< (.getMonth now) 11) 0
-        :else (.getDate now))))
+  (let [now (js/Date.)
+        year (-> now .getFullYear)
+        month (-> now .getMonth inc)
+        date (-> now .getDate)]
+    (if (> year 2016)
+      26
+      (+ date 2))))
 
 (defn default [default-value]
   (fn [value]
@@ -59,11 +59,13 @@
 (defn ->hatch [{n :n :as hatch}]
   (-> hatch
       (assoc :can-open? (< n active-hatch-count)
-             :open? #_ FIXME true)(update :polygon (fn [[start :as polygon]] (conj polygon start)))
+             :open? #_FIXME true)
+      (update :polygon (fn [[start :as polygon]] (conj polygon start)))
       (update :translate (default [0 0]))
       (update :image (default :r))
       (update :scale (default [1 1]))
-      (update :rotate (default 0))))
+      (update :rotate (default 0))
+      (update :label (default (-> n inc str)))))
 
 (def hatches (atom (->> hatch-pos/hatches
                         (sort-by :n)
@@ -79,7 +81,7 @@
 (def MIN -10000000)
 (def MAX +10000000)
 
-(defn draw-hatch-number [ctx n polygon can-open?]
+(defn draw-hatch-number [ctx label polygon can-open?]
   (let [[minx miny maxx maxy] (reduce (fn [[minx miny maxx maxy] [x y]]
                                         [(Math/min minx x) (Math/min miny y)
                                          (Math/max maxx x) (Math/max maxy y)])
@@ -87,12 +89,11 @@
                                       polygon)
         x (+ minx (* (- maxx minx) 0.5))
         y (+ miny (* (- maxy miny) 0.5))]
-    (js/console.log n x y)
     (aset ctx "fillStyle" (if can-open? "rgba(0,128,0,0.9)" "rgba(128,0,0,0.9)"))
     (aset ctx "font" "110px serif")
     (aset ctx "textAlign" "center")
     (aset ctx "textBaseline" "middle")
-    (.fillText ctx (str (inc n)) x y)))
+    (.fillText ctx label x y)))
 
 (defn draw-hatch-image [ctx {image :image [trx try] :translate [sx sy] :scale r :rotate} images]
   (doto ctx
@@ -104,7 +105,7 @@
     (.restore)))
 
 (defn draw-hatches [ctx images]
-  (doseq [{:keys [polygon open? hover? can-open? n] :as hatch} @hatches]
+  (doseq [{:keys [polygon open? hover? can-open? label] :as hatch} @hatches]
     (when open?
       (doto ctx
         (.save)
@@ -120,7 +121,7 @@
         (.beginPath)
         (hatch-path polygon)
         (.fill)
-        (draw-hatch-number n polygon can-open?)
+        (draw-hatch-number label polygon can-open?)
         (.restore)))))
 
 (defn repaint [canvas images]
@@ -134,7 +135,7 @@
     (doto ctx
       (.save)
       (.scale scale scale))
-    #_ FIXME
+    #_FIXME
     (let [{:keys [active offset]} @debug
           {:keys [x y]} (active offset)]
       (doto ctx
@@ -176,7 +177,7 @@
 
 (defn mouse-click [canvas e]
   (let [[x y :as pos] (canvas-pos canvas e)]
-    #_ FIXME
+    #_FIXME
     (if (.-shiftKey e)
       (js/console.log (str "[" (.toFixed x 0) " " (.toFixed y 0) "]"))
       (update-hatches (partial clicked pos)))))
@@ -199,7 +200,7 @@
         repaint (partial repaint canvas images)]
     (.addEventListener canvas "mousemove" (partial mouse-move canvas))
     (.addEventListener canvas "click" (partial mouse-click canvas))
-    #_ FIXME
+    #_FIXME
     (.addEventListener js/window "keydown" (fn [e]
                                              (condp = (.-key e)
                                                "d" (debug!)
