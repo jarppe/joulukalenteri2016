@@ -56,7 +56,7 @@
   (fn [value]
     (or value default-value)))
 
-(defn ->hatch [{n :n :as hatch}]
+(defn ->hatch [n hatch]
   (-> hatch
       (assoc :can-open? (< n active-hatch-count)
              :open? #_FIXME true)
@@ -65,11 +65,10 @@
       (update :image (default :r))
       (update :scale (default [1 1]))
       (update :rotate (default 0))
-      (update :label (default (-> n inc str)))))
+      (update :label (default (str n)))))
 
 (def hatches (atom (->> hatch-pos/hatches
-                        (sort-by :n)
-                        (map ->hatch)
+                        (map ->hatch (range))
                         (vec))))
 
 (defn hatch-path [ctx polygon]
