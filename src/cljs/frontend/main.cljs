@@ -7,14 +7,17 @@
 (def image-ratio (/ image-width image-height))
 (def t-image-index 3)                                       ; http://images.huffingtonpost.com/2016-07-15-1468607338-43291-DonaldTrumpangry.jpg
 
+#_ FIXME
 (def debug (atom {:active :k
                   :offset {:k {:x 0 :y 0}
                            :d {:x 0 :y 0}
                            :r {:x 0 :y 0}}}))
 
+#_ FIXME
 (defn debug! []
   (swap! debug update :active {:k :d :d :r :r :k}))
 
+#_ FIXME
 (defn debug-move! [axis value]
   (swap! debug (fn [{:keys [active] :as debug}]
                  (if (= active :k)
@@ -42,20 +45,29 @@
 
 (def active-hatch-count
   24
+  #_ FIXME
   #_(let [now (js/Date.)]
       (cond
         (> (.getYear now) 116) 24
         (< (.getMonth now) 11) 0
         :else (.getDate now))))
 
-(defn ->hatch [n polygon]
-  {:n n
-   :polygon polygon
-   :can-open? (< n active-hatch-count)
-   :open? true})
+(defn default [default-value]
+  (fn [value]
+    (or value default-value)))
+
+(defn ->hatch [{n :n :as hatch}]
+  (-> hatch
+      (assoc :can-open? (< n active-hatch-count)
+             :open? #_ FIXME true)(update :polygon (fn [[start :as polygon]] (conj polygon start)))
+      (update :translate (default [0 0]))
+      (update :image (default :r))
+      (update :scale (default [1 1]))
+      (update :rotate (default 0))))
 
 (def hatches (atom (->> hatch-pos/hatches
-                        (map-indexed ->hatch)
+                        (sort-by :n)
+                        (map ->hatch)
                         (vec))))
 
 (defn hatch-path [ctx polygon]
@@ -77,36 +89,34 @@
         y (+ miny (* (- maxy miny) 0.5))]
     (js/console.log n x y)
     (aset ctx "fillStyle" (if can-open? "rgba(0,128,0,0.9)" "rgba(128,0,0,0.9)"))
-    (aset ctx "font" "128px serif")
+    (aset ctx "font" "110px serif")
     (aset ctx "textAlign" "center")
     (aset ctx "textBaseline" "middle")
     (.fillText ctx (str (inc n)) x y)))
 
-(defn draw-hatch-image [ctx n images]
-  (if (= n t-image-index)
-    (doto ctx
-      (.save)
-      (.translate 569 430)
-      (.scale 0.6 0.6)
-      (.rotate -0.3)
-      (.drawImage (:t images) 0 0)                          ; 120 164  1.27
-      (.restore))
-    (.drawImage ctx (:r images) 0 0)))
+(defn draw-hatch-image [ctx {image :image [trx try] :translate [sx sy] :scale r :rotate} images]
+  (doto ctx
+    (.save)
+    (.translate trx try)
+    (.scale sx sy)
+    (.rotate r)
+    (.drawImage (images image) 0 0)
+    (.restore)))
 
 (defn draw-hatches [ctx images]
-  (doseq [{:keys [polygon open? hover? can-open? n]} @hatches]
+  (doseq [{:keys [polygon open? hover? can-open? n] :as hatch} @hatches]
     (when open?
       (doto ctx
         (.save)
         (.beginPath)
         (hatch-path polygon)
         (.clip)
-        (draw-hatch-image n images)
+        (draw-hatch-image hatch images)
         (.restore)))
     (when hover?
       (doto ctx
         (.save)
-        (aset "fillStyle" (if can-open? "rgba(0,255,0,0.5)" "rgba(255,0,0,0.5)"))
+        (aset "fillStyle" (if can-open? "rgba(0,255,0,0.3)" "rgba(255,0,0,0.3)"))
         (.beginPath)
         (hatch-path polygon)
         (.fill)
@@ -114,7 +124,6 @@
         (.restore)))))
 
 (defn repaint [canvas images]
-  (js/console.log "repaint")
   (let [width (-> canvas .-offsetWidth)
         height (/ width image-ratio)
         scale (/ width image-width)
@@ -125,9 +134,9 @@
     (doto ctx
       (.save)
       (.scale scale scale))
+    #_ FIXME
     (let [{:keys [active offset]} @debug
           {:keys [x y]} (active offset)]
-      (js/console.log "repaint" (name active) x y)
       (doto ctx
         (.save)
         (.translate x y)
@@ -166,10 +175,11 @@
   (update-hatches (partial hovering (canvas-pos canvas e))))
 
 (defn mouse-click [canvas e]
-  (let [[x y] (canvas-pos canvas e)]
-    (js/console.log (str "[" (.toFixed x 0) " " (.toFixed y 0) "]")))
-
-  #_(update-hatches (partial clicked (canvas-pos canvas e))))
+  (let [[x y :as pos] (canvas-pos canvas e)]
+    #_ FIXME
+    (if (.-shiftKey e)
+      (js/console.log (str "[" (.toFixed x 0) " " (.toFixed y 0) "]"))
+      (update-hatches (partial clicked pos)))))
 
 (defn get-element [element]
   (or (.getElementById js/document element)
@@ -189,6 +199,7 @@
         repaint (partial repaint canvas images)]
     (.addEventListener canvas "mousemove" (partial mouse-move canvas))
     (.addEventListener canvas "click" (partial mouse-click canvas))
+    #_ FIXME
     (.addEventListener js/window "keydown" (fn [e]
                                              (condp = (.-key e)
                                                "d" (debug!)
@@ -197,7 +208,7 @@
                                                "ArrowUp" (debug-move! :y -2)
                                                "ArrowDown" (debug-move! :y +2)
                                                nil)
-                                             (.preventDefault e)
+                                             #_(.preventDefault e)
                                              (repaint)))
     (.addEventListener js/window "resize" repaint)
     (add-watch hatches :hatch-open-watch repaint)
