@@ -27,6 +27,11 @@ git commit -m "..."
 git push
 ```
 
+# Thanks
+
+Special thanks to Joshua Miller's blog 
+http://increasinglyfunctional.com/2013/12/08/point-polygon-clojure/
+
 # License
 
 ## Artistic content
