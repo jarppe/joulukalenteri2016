@@ -90,23 +90,22 @@
 (defn repaint [canvas images]
   (let [width (-> canvas .-offsetWidth)
         height (/ width image-ratio)
-        scale (/ width image-width)
-        ctx (.getContext canvas "2d")]
+        scale (/ width image-width)]
     (doto canvas
       (aset "width" width)
       (aset "height" height))
-    (doto ctx
+    (doto (.getContext canvas "2d")
       (.save)
       (.scale scale scale)
-      (.drawImage (:k images) 0 0)
       (draw-hatches images)
       (.restore))))
 
 (defn canvas-pos [canvas e]
   (let [width (-> canvas .-offsetWidth)
         scale (/ width image-width)
-        ox (-> canvas .-offsetLeft)
-        oy (-> canvas .-offsetTop)
+        parent (-> canvas .-parentElement)
+        ox (-> parent .-offsetLeft)
+        oy (-> parent .-offsetTop)
         x (-> e .-pageX (- ox) (/ scale))
         y (-> e .-pageY (- oy) (/ scale))]
     [x y]))
@@ -144,11 +143,11 @@
   (let [loading (get-element "loading")]
     (aset loading "className" "hidden"))
   ; Make header, canvas and footer visible:
-  (doseq [e (map get-element ["header" "canvas" "footer"])]
+  (doseq [e (map get-element ["header" "article" "footer"])]
     (aset e "className" ""))
   ; Make a repaint, register it to places and invoke it.
   (let [canvas (get-element "canvas")
-        images (into {} (map (juxt keyword get-element) ["k" "r" "t" "d"]))
+        images (into {} (map (juxt keyword get-element) ["r" "t"]))
         repaint (partial repaint canvas images)]
     (.addEventListener canvas "mousemove" (partial mouse-move canvas))
     (.addEventListener canvas "click" (partial mouse-click canvas))
