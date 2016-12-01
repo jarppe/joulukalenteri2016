@@ -44,8 +44,16 @@ header h2 {
   width: 75%;
   text-align: center;
 }
-canvas {
+article {
   margin: 0 40px;
+  position: relative;
+}
+article img,
+article canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 footer {
   font-size: 1rem;
